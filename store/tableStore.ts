@@ -7,6 +7,7 @@ interface Lead {
     property_name: string;
     status: string;
     date: string;
+    status_id : number;
 }
 
 interface TableState {
@@ -22,7 +23,7 @@ interface TableState {
     setSearch: (query: string) => void
     setPage: (page: number) => void
     setDate : (date : string)=> void
-    setUpdateLead: (id: number, status: string) => Promise<boolean | null>;
+    setUpdateLead: (id: number, status: number) => Promise<boolean | null>;
 
     
 
@@ -59,7 +60,7 @@ const useTableStore = create<TableState>((set, get) => ({
     setSearch: (query) => set({ search: query }),
     setPage: (page) => set({ currentPage: page }),
     setDate: (date) => set({date : date, currentPage: 1}),
-    setUpdateLead : async ( id: number, status: string)=>{
+    setUpdateLead : async ( id: number, status: number)=>{
         try {
             const response = await axios.put(`http://localhost:8000/api/leads/${id}`, { status: status });
             if(response.status === 200){

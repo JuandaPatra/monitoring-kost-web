@@ -25,20 +25,21 @@ interface Lead {
     property_name: string;
     status: string;
     date: string;
+    status_id : number;
 }
 export const PopupEdit = ({show, data, onDismiss}: PopupEditProps) => {
 
     useEffect(()=>{
         console.log(data);
-        setStatus(data?.status);
+        setStatus(data?.status_id);
     }, [])
 
     console.log(data?.status);
     const { setUpdateLead } = useTableStore();
-    const [status, setStatus] = useState(data?.status);
+    const [status, setStatus] = useState(data?.status_id);
     const handleChange=(event: React.ChangeEvent<HTMLSelectElement>)=>{
         console.log(event.target.value);
-        setStatus(event.target.value);
+        setStatus(+event.target.value);
     }
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -66,16 +67,16 @@ export const PopupEdit = ({show, data, onDismiss}: PopupEditProps) => {
                       <Select
                         id="status"
                         required
-                        value={2}
+                        value={status}
                         onChange={handleChange}
                       >
                         <option value=""  disabled>
                           -- Select an option --
                         </option>
-                        <option selected={data?.status == "Menghubungi Pemilik"} value={0}>Menghubungi Pemilik</option>
-                        <option selected={data?.status == "Menyewa Kos"} value={1}>Menyewa Kos</option>
-                        <option selected={data?.status == "Tidak jadi Menyewa"} value={2}>Tidak jadi Menyewa</option>
-                        <option selected={data?.status == "Tidak memberi Feedback"} value={3}>Tidak memberi Feedback</option>
+                        <option selected={data?.status_id == 0 } value={0}>Menghubungi Pemilik</option>
+                        <option selected={data?.status_id == 1} value={1}>Menyewa Kos</option>
+                        <option selected={data?.status_id == 2} value={2}>Tidak jadi Menyewa</option>
+                        <option selected={data?.status_id == 3} value={3}>Tidak memberi Feedback</option>
                       </Select>
                     </div>
                     <Button type="submit">Submit</Button>
