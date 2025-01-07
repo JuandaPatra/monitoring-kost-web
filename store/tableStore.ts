@@ -12,7 +12,7 @@ interface Lead {
 
 interface TableState {
     data: Lead[];
-    loading: Boolean
+    loading: boolean
     error: string | null
     currentPage: number
     totalPages: number

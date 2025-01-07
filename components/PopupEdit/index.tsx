@@ -29,6 +29,8 @@ interface Lead {
 }
 export const PopupEdit = ({show, data, onDismiss}: PopupEditProps) => {
 
+  if(!data)return null
+
     useEffect(()=>{
         console.log(data);
         setStatus(data?.status_id);

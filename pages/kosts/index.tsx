@@ -11,22 +11,10 @@ import { Alert } from "flowbite-react";
 
 
 
-async function getData(): Promise<Leads[]> {
-    // Fetch data from your API here.
-    const response = await axios.get('http://localhost:8000/api/leads',{
-      headers: {
-        'Cache-Control': 's-maxage=60',
-      }
-    });
-    console.log(response.data.data)
-    return response.data.data.data
-
-  }
 
 const Kosts = () => {
 
   const [data, setData] = useState<Leads[]>([]);
-  const [loading, setLoading] = useState(true);
   const [pagination, setPagination]= useState({
     pageIndex : 0,
     pageSize : 0

@@ -2,6 +2,57 @@
 @tailwind components;
 @tailwind utilities;
 
+.react-datepicker__header{
+  background-color: transparent !important;
+  border-bottom: none !important;
+}
+
+
+.react-datepicker{
+  width: 220px !important; 
+}
+
+/* menyeting ukuran masing masing tanggal */
+.react-datepicker__time-name{
+  width: 25px !important;
+}
+
+.react-datepicker__day-name{
+  margin: 0.1rem !important;
+}
+
+.react-datepicker__month-container {
+  width: 220px !important;
+}
+
+/* Menghilangkan segitiga dropdown di react-datepicker */
+.react-datepicker__triangle {
+  display: none !important;
+}
+
+.react-datepicker__day{
+  margin: 0.1rem !important;
+  font-size: 15px !important;
+}
+
+.react-datepicker__day--keyboard-selected{
+  border-radius: 50% !important;
+  -webkit-border-radius: 50% !important;
+  -moz-border-radius: 50% !important;
+  -ms-border-radius: 50% !important;
+  -o-border-radius: 50% !important;
+}
+
+/* CSS untuk menyesuaikan lebar popup dengan lebar input */
+.react-datepicker-popper {
+  width: 222px !important; /* Memastikan lebar popup fleksibel */
+}
+
+.react-datepicker__wrapper {
+  display: inline-block;
+  width: 100%;
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -9,7 +60,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
+    --background: #000000;
     --foreground: #ededed;
   }
 }

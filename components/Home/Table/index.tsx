@@ -2,8 +2,8 @@
 import axios from "axios";
 import { Table } from "flowbite-react";
 import { useEffect, useState } from "react";
-import { Datepicker } from "flowbite-react";
-
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import FormatDate from "@/utils/formatDate";
 import {
   useReactTable,
@@ -47,7 +47,7 @@ export const HomeTable = () => {
 
   const [inputSearch, setInputSearch] = useState("");
   const [showEditPopup, setShowEditPopup] = useState(false);
-  const [ selectedData, setSelectedData] = useState<Lead |null>(null)
+  const [selectedData, setSelectedData] = useState<Lead | null>(null);
 
   // Define columns
   const columnHelper = createColumnHelper<Lead>();
@@ -84,11 +84,35 @@ export const HomeTable = () => {
 
   const handleEdit = (e: Row<Lead>) => {
     console.log(e.original.id);
-    setShowEditPopup(true)
-    setSelectedData(e.original)    
+    setShowEditPopup(true);
+    setSelectedData(e.original);
   };
 
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+  const CustomHeader = ({ date, decreaseMonth, increaseMonth }: any) => {
+    const isPreviousDisabled = date <= oneWeekAgo;
 
+    return (
+      <div className="flex justify-between items-center p-2">
+        <button
+          onClick={decreaseMonth}
+          disabled={isPreviousDisabled}
+          className={`p-2 rounded ${
+            isPreviousDisabled ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+        >
+          Prev
+        </button>
+        <span>
+          {date.toLocaleString("default", { month: "long", year: "numeric" })}
+        </span>
+        <button onClick={increaseMonth} className="p-2 rounded">
+          Next
+        </button>
+      </div>
+    );
+  };
 
   const handleSearch = () => {
     setSearch(inputSearch);
@@ -112,20 +136,39 @@ export const HomeTable = () => {
     },
   });
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const date = FormatDate(event.target.value);
+  const handleChange = (event: Date) => {
+    const dateFormat = event.toString();
+    alert(dateFormat);
+
+    const date = FormatDate(dateFormat);
+    console.log(event);
     setDate(date);
     fetchData();
   };
+
   return (
     <>
-      <PopupEdit show={showEditPopup} data={selectedData }  onDismiss={()=>setShowEditPopup(false)} />
+      <PopupEdit
+        show={showEditPopup}
+        data={selectedData}
+        onDismiss={() => setShowEditPopup(false)}
+      />
       <h1 className="text-center text-xl text-cyan-500 font-bold mb-3">
         LEADS KOST
       </h1>
       <div className="flex">
         <div className="col-3">
-          <Datepicker className="w-[222px]" onSelect={handleChange} />
+          <div >
+          <DatePicker
+            // selected={new Date(date)}
+            onChange={() => handleChange}
+            minDate={oneWeekAgo}
+            className="w-[220px]"
+            placeholderText="Pilih tanggal"
+            
+          />
+
+          </div>
         </div>
       </div>
       <label htmlFor="search" className="mb-4 flex justify-end">

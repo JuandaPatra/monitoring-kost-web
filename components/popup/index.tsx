@@ -15,8 +15,7 @@ import { ToastSubmit } from "../Toast";
 
 import useTableStore from "@/store/tableStore";
 import { useConfigStore } from "@/store/configStore";
-
-
+import phoneNumberRegex from "@/utils/phoneNumberRegex";
 
 export const PopupInsert = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -28,17 +27,21 @@ export const PopupInsert = () => {
     status: "",
   });
 
-  const { properties, totalLeads, todayLeads, propertyMostChosen} = useConfigStore()
-
+  const { properties, totalLeads, todayLeads, propertyMostChosen } =
+    useConfigStore();
 
   const [showToast, setShowToast] = useState(false);
 
-  const {addLead, fetchData} = useTableStore()
-
-
+  const { addLead, fetchData } = useTableStore();
 
   const handleChange = (e: any) => {
     const { id, value } = e.target;
+    if (id === "telephone") {
+      const regex = /^[0-9+]*$/; // Hanya angka dan tanda + yang diperbolehkan.
+      if (!regex.test(value)) {
+        return; // Jangan perbarui state jika karakter tidak valid.
+      }
+    }
     setFormData((prev) => ({
       ...prev,
       [id]: value,
@@ -58,8 +61,8 @@ export const PopupInsert = () => {
       });
 
       if (response.status === 200) {
-        addLead(1)
-        fetchData()
+        addLead(1);
+        fetchData();
         setOpenModal(false);
         setShowToast(true);
         setFormData({
@@ -68,24 +71,29 @@ export const PopupInsert = () => {
           telephone: "",
           properti: "",
           status: "",
-        })
+        });
       } else {
         console.log(response);
       }
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  const handleShowToast =()=>{
-    setShowToast(false)
-  }
+  const handleShowToast = () => {
+    setShowToast(false);
+  };
   return (
     <>
-    <div className="pt-5 pb-2 flex justify-end">
-      <Button onClick={() => setOpenModal(true)} className="bg-cyan-500 text-white text-xl font-bold items-center gap-2">
-      <IoIosAddCircle className="text-xl" />
-        Tambah Leads</Button>
-
-    </div>
+      <div className="pt-5 pb-2 flex justify-end">
+        <Button
+          onClick={() => setOpenModal(true)}
+          className="bg-cyan-500 text-white text-xl font-bold items-center gap-2"
+        >
+          <IoIosAddCircle className="text-xl" />
+          Tambah Leads
+        </Button>
+      </div>
       <Modal show={openModal} onClose={() => setOpenModal(false)}>
         <Modal.Header>Insert Leads</Modal.Header>
         <Modal.Body>
@@ -142,11 +150,11 @@ export const PopupInsert = () => {
                 <option value="" selected disabled>
                   -- Select an option --
                 </option>
-                {
-                  properties.map((kost) => (
-                    <option key={kost.id} value={kost.id}>{kost.name}</option>
-                  ))
-                }
+                {properties.map((kost) => (
+                  <option key={kost.id} value={kost.id}>
+                    {kost.name}
+                  </option>
+                ))}
               </Select>
             </div>
 
@@ -174,9 +182,7 @@ export const PopupInsert = () => {
         </Modal.Body>
       </Modal>
 
-      
-       <ToastSubmit show={showToast} onDismiss={handleShowToast} />
-      
+      <ToastSubmit show={showToast} onDismiss={handleShowToast} />
     </>
   );
 };

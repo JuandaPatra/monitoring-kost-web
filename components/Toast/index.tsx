@@ -1,7 +1,7 @@
 import {
     Toast,
   } from "flowbite-react";
-  import { HiCheck, HiExclamation, HiX } from "react-icons/hi";
+  import { HiCheck } from "react-icons/hi";
 
   interface ToastSubmitProps {
     show: boolean; // Menentukan apakah toast akan ditampilkan
