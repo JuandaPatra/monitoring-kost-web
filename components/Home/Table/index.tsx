@@ -19,12 +19,18 @@ import { CiSearch } from "react-icons/ci";
 import useCounterStore from "@/store/counterStore";
 import useTableStore from "@/store/tableStore";
 import { PopupEdit } from "@/components/PopupEdit";
+import { useParams } from "next/navigation";
 interface Lead {
   id: number;
   name: string;
   property_name: string;
   status: string;
   date: string;
+}
+
+interface ExportData {
+  start_date: string | null;
+  end_date: string | null;
 }
 export const HomeTable = () => {
   const {
@@ -48,6 +54,8 @@ export const HomeTable = () => {
   const [inputSearch, setInputSearch] = useState("");
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [selectedData, setSelectedData] = useState<Lead | null>(null);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   // Define columns
   const columnHelper = createColumnHelper<Lead>();
@@ -131,6 +139,7 @@ export const HomeTable = () => {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
+
     onPaginationChange: ({ pageIndex }: any) => {
       setPage(pageIndex + 1);
     },
@@ -138,12 +147,49 @@ export const HomeTable = () => {
 
   const handleChange = (event: Date) => {
     const dateFormat = event.toString();
-    alert(dateFormat);
+    // alert(dateFormat);
 
     const date = FormatDate(dateFormat);
     console.log(event);
     setDate(date);
     fetchData();
+  };
+
+  const onChange = (dates: any) => {
+    const [start, end] = dates;
+    setStartDate(start);
+    setEndDate(end);
+  };
+
+  const downloaddata = async () => {
+    const params: ExportData = {
+      start_date: startDate ?? "2024-12-31",
+      end_date: endDate ?? "2025-01-02",
+    };
+
+    console.log('parameter', startDate, ' ', endDate);
+    try {
+      const response = await axios.get(
+        "http://localhost:8000/api/export-excel",
+        {
+          params,
+          responseType: "blob", // Penting untuk file binary
+        }
+      );
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+
+      // Nama file unduhan (ganti sesuai kebutuhan)
+      link.setAttribute("download", "data.xlsx");
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -157,19 +203,27 @@ export const HomeTable = () => {
         LEADS KOST
       </h1>
       <div className="flex">
-        <div className="col-3">
-          <div >
-          <DatePicker
-            // selected={new Date(date)}
-            onChange={() => handleChange}
-            minDate={oneWeekAgo}
-            className="w-[220px]"
-            placeholderText="Pilih tanggal"
-            
-          />
-
+        <div className="col-5">
+          <div>
+            <DatePicker
+              selected={startDate}
+              onChange={onChange}
+              minDate={oneWeekAgo}
+              className="w-[220px]"
+              placeholderText="Pilih tanggal"
+              startDate={startDate}
+              endDate={endDate}
+              selectsRange
+            />
           </div>
         </div>
+        <button
+          className=" bg-cyan-500 py-[8px] rounded-r-md px-3 text-white border-2 "
+          type="button"
+          onClick={downloaddata}
+        >
+          Download
+        </button>
       </div>
       <label htmlFor="search" className="mb-4 flex justify-end">
         <div className="flex items-center">
@@ -212,15 +266,29 @@ export const HomeTable = () => {
             ))}
           </thead>
           <tbody>
-            {table.getRowModel().rows.map((row) => (
-              <tr key={row.id} className="border-b hover:bg-gray-50">
-                {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id} className="px-4 py-2 text-gray-700">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
+            {table.getRowModel().rows.length > 0 ? (
+              table.getRowModel().rows.map((row) => (
+                <tr key={row.id} className="border-b hover:bg-gray-50">
+                  {row.getVisibleCells().map((cell) => (
+                    <td key={cell.id} className="px-4 py-2 text-gray-700">
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td
+                  colSpan={table.getAllColumns().length}
+                  className="px-4 py-4 text-center text-gray-500"
+                >
+                  No data available
+                </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
 

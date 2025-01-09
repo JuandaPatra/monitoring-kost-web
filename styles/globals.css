@@ -52,6 +52,91 @@
   display: inline-block;
   width: 100%;
 }
+.react-datepicker {
+  font-family: Arial, sans-serif;
+}
+
+.react-datepicker__day {
+  width: 2rem;
+  height: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.2rem;
+  border-radius: 50%;
+  color: #333;
+  transition: all 0.3s;
+}
+
+.react-datepicker__week {
+  margin-bottom: 5px !important;
+}
+/* ubah semua first child pada setiap minggu */
+.react-datepicker__week > *:first-child{
+  padding-left: 5px !important;
+}
+
+
+.react-datepicker__day-name{
+  margin: 0px !important;
+}
+.react-datepicker__day-names:first-child{
+  padding-left: 5px !important;
+}
+
+
+/* hilangkan margin setiap tanggal */
+
+.react-datepicker__day{
+  margin: 0px !important;
+  height: 2.3rem !important;
+  vertical-align: middle !important; 
+  line-height:  2.3rem !important;
+}
+
+
+.react-datepicker__day--today {
+  background-color: white !important;
+  color: #000;
+}
+
+.react-datepicker__day--keyboard-selected{
+  background-color: white !important;
+}
+
+.react-datepicker__day--selected {
+  background-color: #1e90ff;
+  color: #fff;
+  /* border-radius: 0px !important; */
+  border-top-left-radius: 30% !important;
+  border-bottom-left-radius: 30% !important;
+}
+
+
+
+.react-datepicker__day:hover {
+  background-color: #87cefa;
+  color: #000;
+  cursor: pointer;
+}
+.react-datepicker__day--in-range{
+  border-radius: 0px !important;
+  border: 0px !important;
+}
+
+.react-datepicker__day--range-start{
+  border-top-left-radius: 30% !important;
+  border-bottom-left-radius: 30% !important;
+  border: 0px !important;
+}
+.react-datepicker__day--range-end{
+  border-top-right-radius: 30% !important;
+  border-bottom-right-radius: 30% !important;
+  border: 0px !important;
+}
+.react-datepicker__day--in-range.react-datepicker__day--today{
+  background-color: #216ba5 !important ;
+}
 
 :root {
   --background: #ffffff;
