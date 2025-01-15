@@ -26,6 +26,7 @@ interface Lead {
   property_name: string;
   status: string;
   date: string;
+  status_id : number;
 }
 
 interface ExportData {
