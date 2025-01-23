@@ -34,7 +34,7 @@ export const useConfigStore = create<ConfigState>((set) => ({
     last7DaysLeads : [],
     fetchData: async () => {
         try {
-            const response = await axios.get('http://localhost:8000/api/home');
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/home`);
             set({ properties: response.data.data.properties, totalLeads: response.data.data.totalLeads, todayLeads: response.data.data.todayLeads, propertyMostChosen: response.data.data.propertyMostChosen, last7DaysLeads: response.data.data.last7DaysLeads
              })
 
