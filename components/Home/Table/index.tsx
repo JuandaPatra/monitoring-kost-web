@@ -171,7 +171,7 @@ export const HomeTable = () => {
     console.log('parameter', startDate, ' ', endDate);
     try {
       const response = await axios.get(
-        "http://localhost:8000/api/export-excel",
+        `${process.env.NEXT_PUBLIC_API_URL}/export-excel`,
         {
           params,
           responseType: "blob", // Penting untuk file binary

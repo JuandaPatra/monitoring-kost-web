@@ -30,14 +30,14 @@ export const useStatisticStore = create<StatisticState>((set) => ({
     propertyMostChosen: [],
     fetchData: async () => {
         try {
-            const response = await axios.get('http://localhost:8000/api/statistics');
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/statistics`);
             set({
                 propertyMostChosen: response.data.data.propertyMostChosen, last7DaysLeads: response.data.data.last7DaysLeads,
                 leadsStatusDistribution: response.data.data.leadsStatusDistribution
             })
 
-            console.log(response.data.data.leadsStatusDistribution)
-            console.log(response.data.data.last7DaysLeads)
+            // console.log(response.data.data.leadsStatusDistribution)
+            // console.log(response.data.data.last7DaysLeads)
 
 
         } catch (error) { console.log(error) }

@@ -43,7 +43,7 @@ const useTableStore = create<TableState>((set, get) => ({
         try {
             set({ loading: true, error: null })
             const response = await axios.get(
-                `http://localhost:8000/api/leads?page=${currentPage}&q=${search}&start_date=${date}`
+                `${process.env.NEXT_PUBLIC_API_URL}/leads?page=${currentPage}&q=${search}&start_date=${date}`
             );
             set({
                 data: response.data.data.data || [],
@@ -62,7 +62,7 @@ const useTableStore = create<TableState>((set, get) => ({
     setDate: (date) => set({date : date, currentPage: 1}),
     setUpdateLead : async ( id: number, status: number)=>{
         try {
-            const response = await axios.put(`http://localhost:8000/api/leads/${id}`, { status: status });
+            const response = await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/leads/${id}`, { status: status });
             if(response.status === 200){
                await  get().fetchData()
                 return true
