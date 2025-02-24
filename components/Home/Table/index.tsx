@@ -194,7 +194,7 @@ export const HomeTable = () => {
   };
 
   return (
-    <>
+    <div className="px-3">
       <PopupEdit
         show={showEditPopup}
         data={selectedData}
@@ -203,7 +203,7 @@ export const HomeTable = () => {
       <h1 className="text-center text-xl text-cyan-500 font-bold mb-3">
         LEADS KOST
       </h1>
-      <div className="flex">
+      {/* <div className="flex">
         <div className="col-5">
           <div>
             <DatePicker
@@ -225,17 +225,17 @@ export const HomeTable = () => {
         >
           Download
         </button>
-      </div>
+      </div> */}
       <label htmlFor="search" className="mb-4 flex justify-end">
         <div className="flex items-center">
-          <span>Search :</span>
-          &nbsp;
+
           <input
             id="search"
             type="text"
             value={inputSearch}
             onChange={(e) => setInputSearch(e.target.value)}
-            className="border-transparent leading-[27px]"
+            className=" leading-[27px]"
+            placeholder="search ..."
           />
           <button
             className="bg-cyan-500 text-white p-3 rounded-r-md hover:bg-cyan-600 transition"
@@ -337,6 +337,6 @@ export const HomeTable = () => {
           </p>
         </div>
       </div>
-    </>
+    </div>
   );
 };

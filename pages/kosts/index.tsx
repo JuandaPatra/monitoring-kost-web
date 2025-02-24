@@ -10,6 +10,7 @@ import { PopupForm } from '@/components/popupform'
 import { Alert } from "flowbite-react";
 import { Layout } from '@/components/Layout'
 import { KostsTable } from '@/components/Kosts/Table'
+import { PopupInsertKost } from '@/components/Kosts/popup/PopupInsertKost'
 
 
 
@@ -25,7 +26,7 @@ const Kosts = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await axios.get('http://localhost:8000/api/leads');
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/leads`);
         setData(response.data.data.data);
         setPagination({
           pageIndex : 1,
@@ -45,6 +46,7 @@ const Kosts = () => {
   return (
     <>
     <Layout>
+      <PopupInsertKost />
       <KostsTable/>
     </Layout>
     </>

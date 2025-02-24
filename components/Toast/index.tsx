@@ -6,9 +6,10 @@ import {
   interface ToastSubmitProps {
     show: boolean; // Menentukan apakah toast akan ditampilkan
     onDismiss: () => void; // Fungsi callback untuk menyembunyikan toast
+    message : string
   }
 
-export const ToastSubmit=({show, onDismiss}: ToastSubmitProps)=>{
+export const ToastSubmit=({show, onDismiss, message}: ToastSubmitProps)=>{
     if(!show) return null
     return(
         <div className="fixed top-5 right-5 z-50 flex items-center w-auto max-w-xs p-4 space-x-4 ">
@@ -17,7 +18,7 @@ export const ToastSubmit=({show, onDismiss}: ToastSubmitProps)=>{
                     <HiCheck className="h-5 w-5" />
                   </div>
                   <div className="ml-3 text-sm font-normal">
-                    Leads Berhasil ditambahkan
+                    {message}
                   </div>
                   <Toast.Toggle onDismiss={onDismiss} />
                 </Toast></div>

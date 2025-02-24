@@ -21,96 +21,116 @@ import useTableStore from "@/store/tableStore";
 import { PopupEdit } from "@/components/PopupEdit";
 import { useParams } from "next/navigation";
 import useKostStore from "@/store/tableKostStore";
-
-
+import { PopupEditKost } from "../popup/PopupEditKost";
 
 interface Kost {
-    id: number;
-    name: string;
-    address: string;
-    price: number;
-    kost_owner : string;
-  }
+  id: number;
+  name: string;
+  address: string;
+  price: number;
+  kost_owner: string;
+}
 
 export const KostsTable = () => {
-    const {
-        data,
-        loading,
-        error,
-        currentPage,
-        totalPages,
-        search,
-        date,
-        fetchData,
-        setSearch,
-        setPage,
-        setDate,
-      } = useKostStore();
-    
-      useEffect(() => {
-        fetchData();
-      }, [currentPage, search]);
+  const {
+    data,
+    loading,
+    error,
+    currentPage,
+    totalPages,
+    search,
+    date,
+    fetchData,
+    setSearch,
+    setPage,
+    setDate,
+  } = useKostStore();
 
-      // Define columns
-        const columnHelper = createColumnHelper<Kost>();
-        const columns = [
-          columnHelper.accessor("name", {
-            header: () => <span className="font-bold text-lg py-3">Kost</span>,
-            cell: (info) => info.getValue(),
-          }),
-          columnHelper.accessor("address", {
-            header: () => <span className="font-bold text-lg py-3">Alamat</span>,
-            cell: (info) => info.getValue(),
-          }),
-          columnHelper.accessor("price", {
-            header: () => <span className="font-bold text-lg py-3">Harga</span>,
-            cell: (info) =>
-              new Intl.NumberFormat("id-ID", {
-                style: "currency",
-                currency: "IDR",
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0,
-              }).format(info.getValue()),
-          }),
-          columnHelper.accessor("kost_owner", {
-            header: () => <span className="font-bold text-lg py-3">Pemilik Kost</span>,
-            cell: (info) => info.getValue(),
-          }),
-          columnHelper.display({
-            id: "edit",
-            header: () => <span className="font-bold text-lg py-3">Actions</span>,
-            cell: ({ row }) => (
-              <button
-                onClick={() => null}
-                className="bg-cyan-500 w-20  text-white px-3 py-1 rounded text-base"
-              >
-                Edit
-              </button>
-            ),
-          }),
-        ];
+  useEffect(() => {
+    fetchData();
+  }, [currentPage, search]);
 
-    const table = useReactTable({
-        data,
-        columns,
-        pageCount: totalPages,
-        state: {
-          pagination: {
-            pageIndex: currentPage - 1,
-            pageSize: 10,
-          },
-        },
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        manualPagination: true,
+  const [inputSearch, setInputSearch] = useState("");
+  const [showEditPopup, setShowEditPopup] = useState(false);
+   const [selectedData, setSelectedData] = useState<Kost | null>(null);
+  // Define columns
+  const columnHelper = createColumnHelper<Kost>();
+  const columns = [
+    columnHelper.accessor("name", {
+      header: () => <span className="font-bold text-lg py-3">Kost</span>,
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor("address", {
+      header: () => <span className="font-bold text-lg py-3">Alamat</span>,
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.accessor("price", {
+      header: () => <span className="font-bold text-lg py-3">Harga</span>,
+      cell: (info) =>
+        new Intl.NumberFormat("id-ID", {
+          style: "currency",
+          currency: "IDR",
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }).format(info.getValue()),
+    }),
+    columnHelper.accessor("kost_owner", {
+      header: () => (
+        <span className="font-bold text-lg py-3">Pemilik Kost</span>
+      ),
+      cell: (info) => info.getValue(),
+    }),
+    columnHelper.display({
+      id: "edit",
+      header: () => <span className="font-bold text-lg py-3">Actions</span>,
+      cell: ({ row }) => (
+        <button
+          onClick={() => handleEdit(row)}
+          className="bg-cyan-500 w-20  text-white px-3 py-1 rounded text-base"
+        >
+          Edit
+        </button>
+      ),
+    }),
+  ];
+
+
+  const handleEdit = (e: Row<Kost>) => {
+    console.log(e.original.id);
+    setShowEditPopup(true);
     
-        onPaginationChange: ({ pageIndex }: any) => {
-          setPage(pageIndex + 1);
-        },
-      });
-    
+  }
+  const handleSearch = () => {
+    setSearch(inputSearch);
+  };
+
+  const table = useReactTable({
+    data,
+    columns,
+    pageCount: totalPages,
+    state: {
+      pagination: {
+        pageIndex: currentPage - 1,
+        pageSize: 10,
+      },
+    },
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    manualPagination: true,
+
+    onPaginationChange: ({ pageIndex }: any) => {
+      setPage(pageIndex + 1);
+    },
+  });
+
   return (
-    <>
+    <div className="px-3">
+
+    <PopupEditKost
+    show={showEditPopup}
+    onDismiss={() => setShowEditPopup(false)}
+    data={selectedData}
+    />
       <h1 className="text-center text-xl text-cyan-500 font-bold mb-3 pt-2">
         LISTS KOST
       </h1>
@@ -121,14 +141,14 @@ export const KostsTable = () => {
           <input
             id="search"
             type="text"
-            // value={inputSearch}
-            // onChange={(e) => setInputSearch(e.target.value)}
+            value={inputSearch}
+            onChange={(e) => setInputSearch(e.target.value)}
             placeholder="Search..."
-            className="border-transparent leading-[27px]"
+            className=" leading-[27px]"
           />
           <button
             className="bg-cyan-500 text-white p-3 rounded-r-md hover:bg-cyan-600 transition"
-            // onClick={handleSearch}
+            onClick={handleSearch}
           >
             <CiSearch size={20} />
           </button>
@@ -136,7 +156,7 @@ export const KostsTable = () => {
       </label>
 
       <div className="overflow-x-auto mt-2 pb-5">
-      <table className=" table-fixed w-[600px] lg:w-full  bg-white border border-gray-200 rounded-lg">
+        <table className=" table-fixed w-[600px] lg:w-full  bg-white border border-gray-200 rounded-lg">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id} className="border-b">
@@ -182,8 +202,8 @@ export const KostsTable = () => {
             )}
           </tbody>
         </table>
-       {/* Pagination Controls */}
-       <div className="flex justify-center space-x-2 my-4 ">
+        {/* Pagination Controls */}
+        <div className="flex justify-center space-x-2 my-4 ">
           <button
             onClick={() => setPage(Math.max(currentPage - 1, 1))}
             disabled={currentPage === 1}
@@ -226,6 +246,6 @@ export const KostsTable = () => {
           </p>
         </div>
       </div>
-    </>
+    </div>
   );
 };
