@@ -1,4 +1,5 @@
 "use client"
+import useKostStore from "@/store/tableKostStore";
 import axios from "axios";
 import {
   Button,
@@ -11,48 +12,51 @@ import {
 } from "flowbite-react";
 import { useEffect, useState } from "react";
 
-import useTableStore from "@/store/tableStore";
-
 interface PopupEditProps {
     show: boolean
-    data: Lead | null
+    data: Kost | null
     onDismiss: () => void
 }
 
-interface Lead {
-    id: number;
-    name: string;
-    property_name: string;
-    status: string;
-    date: string;
-    status_id : number;
+interface Kost{
+    id: number
+    name: string
+    address: string
+    price: number
+    kost_owner: string
 }
-export const PopupEdit = ({show, data, onDismiss}: PopupEditProps) => {
 
-  if(!data)return null
+interface KostUpdate{
+    id: number
+    name: string
+    address: string
+    price: number
+    kost_owner: string
+}
+
+export const PopupEditKost: React.FC<PopupEditProps> = ({show, data, onDismiss}) => {
+    if(!data)return null
 
     useEffect(()=>{
         console.log(data);
-        setStatus(data?.status_id);
+        // setStatus(data?.status_id);
     }, [])
 
-    console.log(data?.status);
-    const { setUpdateLead } = useTableStore();
-    const [status, setStatus] = useState(data?.status_id);
+    const { setUpdateKost } = useKostStore();
+    const [status, setStatus] = useState<Kost>(data);
     const handleChange=(event: React.ChangeEvent<HTMLSelectElement>)=>{
         console.log(event.target.value);
-        setStatus(+event.target.value);
+        // setStatus(+event.target.value);
     }
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
         e.preventDefault();
-        const response = await setUpdateLead(data?.id!, status!);
+        const response = await setUpdateKost(data?.id!, data!);
         if(response){
             onDismiss();
         }
     }
-
     return (
         <>
         <Modal show={show} onClose={onDismiss} >
@@ -70,16 +74,16 @@ export const PopupEdit = ({show, data, onDismiss}: PopupEditProps) => {
                       <Select
                         id="status"
                         required
-                        value={status}
+                        // value={status}
                         onChange={handleChange}
                       >
                         <option value=""  disabled>
                           -- Select an option --
                         </option>
-                        <option selected={data?.status === "menghubungi pemilik" } value={0}>Menghubungi Pemilik</option>
-                        <option selected={data?.status === "menyewa kos"} value={1}>Menyewa Kos</option>
-                        <option selected={data?.status ===  "Tidak Jadi Menyewa"} value={2}>Tidak jadi Menyewa</option>
-                        <option selected={data?.status === "Tidak memberi feedback"} value={3}>Tidak memberi Feedback</option>
+                        {/* <option selected={data?.status_id == 0 } value={0}>Menghubungi Pemilik</option>
+                        <option selected={data?.status_id == 1} value={1}>Menyewa Kos</option>
+                        <option selected={data?.status_id == 2} value={2}>Tidak jadi Menyewa</option>
+                        <option selected={data?.status_id == 3} value={3}>Tidak memberi Feedback</option> */}
                       </Select>
                     </div>
                     <Button type="submit">Submit</Button>
@@ -88,4 +92,5 @@ export const PopupEdit = ({show, data, onDismiss}: PopupEditProps) => {
               </Modal>
         </>
     );
-};
+
+}

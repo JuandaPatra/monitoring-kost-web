@@ -16,13 +16,13 @@ export default function Home() {
       fetchData()
   }, [])
   return (
-    <>
+    <div className="">
       <Layout>
 
         <PopupInsert />
         <HomeTable />
 
       </Layout>
-    </>
+    </div>
   );
 }

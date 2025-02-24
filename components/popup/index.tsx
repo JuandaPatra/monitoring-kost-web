@@ -17,6 +17,16 @@ import useTableStore from "@/store/tableStore";
 import { useConfigStore } from "@/store/configStore";
 import phoneNumberRegex from "@/utils/phoneNumberRegex";
 
+interface Property {
+  id : number;
+  name : string;
+}
+
+interface ApiResponse {
+  data : Property[];
+  status  : string;
+}
+
 export const PopupInsert = () => {
   const [openModal, setOpenModal] = useState(false);
   const [formData, setFormData] = useState({
@@ -26,9 +36,25 @@ export const PopupInsert = () => {
     properti: "",
     status: "",
   });
+  const [listProperties, setListProperties] = useState<Property[]>([]);
 
-  const { properties, totalLeads, todayLeads, propertyMostChosen } =
-    useConfigStore();
+  useEffect(() => {
+    console.log('tes')
+    
+     const fetchProperties= async () => {
+        const responseProperties = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/api/kost/list`
+        );
+
+        console.log(responseProperties)
+
+        setListProperties(responseProperties.data.data);
+      };
+    
+      fetchProperties()
+  }, []);
+
+
 
   const [showToast, setShowToast] = useState(false);
 
@@ -52,13 +78,16 @@ export const PopupInsert = () => {
     console.log(formData);
     e.preventDefault();
     try {
-      const response = await axios.post(`http://localhost:8000/api/leads`, {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.telephone,
-        property_id: formData.properti,
-        status: formData.status,
-      });
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_API_URL}/leads`,
+        {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.telephone,
+          property_id: formData.properti,
+          status: formData.status,
+        }
+      );
 
       if (response.status === 200) {
         addLead(1);
@@ -150,7 +179,7 @@ export const PopupInsert = () => {
                 <option value="" selected disabled>
                   -- Select an option --
                 </option>
-                {properties.map((kost) => (
+                {listProperties.map((kost) => (
                   <option key={kost.id} value={kost.id}>
                     {kost.name}
                   </option>
@@ -182,7 +211,11 @@ export const PopupInsert = () => {
         </Modal.Body>
       </Modal>
 
-      <ToastSubmit show={showToast} onDismiss={handleShowToast} />
+      <ToastSubmit
+        show={showToast}
+        onDismiss={handleShowToast}
+        message="Leads Berhasil Ditambahkan"
+      />
     </>
   );
 };
