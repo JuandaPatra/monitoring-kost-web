@@ -43,10 +43,9 @@ export const PopupInsert = () => {
     
      const fetchProperties= async () => {
         const responseProperties = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/kost/list`
+          `${process.env.NEXT_PUBLIC_API_URL}/kost/list`
         );
 
-        console.log(responseProperties)
 
         setListProperties(responseProperties.data.data);
       };
@@ -179,7 +178,7 @@ export const PopupInsert = () => {
                 <option value="" selected disabled>
                   -- Select an option --
                 </option>
-                {listProperties.map((kost) => (
+                {listProperties?.map((kost) => (
                   <option key={kost.id} value={kost.id}>
                     {kost.name}
                   </option>
