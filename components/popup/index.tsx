@@ -3,32 +3,21 @@ import axios from "axios";
 import {
   Button,
   Modal,
-  Checkbox,
   Label,
   TextInput,
   Select,
-  Toast,
 } from "flowbite-react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useReducer } from "react";
 import { IoIosAddCircle } from "react-icons/io";
 import { ToastSubmit } from "../Toast";
 
 import useTableStore from "@/store/tableStore";
-import { useConfigStore } from "@/store/configStore";
-import phoneNumberRegex from "@/utils/phoneNumberRegex";
 
-interface Property {
-  id : number;
-  name : string;
-}
-
-interface ApiResponse {
-  data : Property[];
-  status  : string;
-}
+import {formReducer, initialState} from "@/reducers/formReducerPopupInsert"
 
 export const PopupInsert = () => {
-  const [openModal, setOpenModal] = useState(false);
+
+  const [state, dispatch] = useReducer(formReducer, initialState)
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -36,18 +25,19 @@ export const PopupInsert = () => {
     properti: "",
     status: "",
   });
-  const [listProperties, setListProperties] = useState<Property[]>([]);
 
   useEffect(() => {
-    console.log('tes')
     
      const fetchProperties= async () => {
+
+      try{
         const responseProperties = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/kost/list`
         );
-
-
-        setListProperties(responseProperties.data.data);
+        dispatch({type: "SET_LIST_PROPERTIES", payload: responseProperties.data.data })
+      }catch(e){
+        console.log(e)
+      }
       };
     
       fetchProperties()
@@ -55,7 +45,7 @@ export const PopupInsert = () => {
 
 
 
-  const [showToast, setShowToast] = useState(false);
+
 
   const { addLead, fetchData } = useTableStore();
 
@@ -67,6 +57,11 @@ export const PopupInsert = () => {
         return; // Jangan perbarui state jika karakter tidak valid.
       }
     }
+
+    dispatch({
+      type: "SET_FORM_DATA",
+      payload : {field : id, value}
+    })
     setFormData((prev) => ({
       ...prev,
       [id]: value,
@@ -80,26 +75,27 @@ export const PopupInsert = () => {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/leads`,
         {
-          name: formData.name,
-          email: formData.email,
-          phone: formData.telephone,
-          property_id: formData.properti,
-          status: formData.status,
+          name: state.formData.name,
+          email: state.formData.email,
+          phone: state.formData.telephone,
+          property_id: state.formData.properti,
+          status: state.formData.status,
         }
       );
 
       if (response.status === 200) {
         addLead(1);
         fetchData();
-        setOpenModal(false);
-        setShowToast(true);
-        setFormData({
-          name: "",
-          email: "",
-          telephone: "",
-          properti: "",
-          status: "",
-        });
+
+        dispatch({
+          type : "TOGGLE_MODAL"
+        })
+        dispatch({
+          type : "SET_TOAST"
+        })
+        dispatch({
+          type : "RESET_FORM"
+        })
       } else {
         console.log(response);
       }
@@ -109,20 +105,22 @@ export const PopupInsert = () => {
   };
 
   const handleShowToast = () => {
-    setShowToast(false);
+    dispatch({type: "SET_TOAST"})
   };
   return (
     <>
       <div className="pt-5 pb-2 flex justify-end">
         <Button
-          onClick={() => setOpenModal(true)}
+          onClick={() => dispatch({
+            type : "TOGGLE_MODAL"
+          })}
           className="bg-cyan-500 text-white text-xl font-bold items-center gap-2"
         >
           <IoIosAddCircle className="text-xl" />
           Tambah Leads
         </Button>
       </div>
-      <Modal show={openModal} onClose={() => setOpenModal(false)}>
+      <Modal show={state.openModal} onClose={() => dispatch({type: "TOGGLE_MODAL"})}>
         <Modal.Header>Insert Leads</Modal.Header>
         <Modal.Body>
           <form
@@ -137,7 +135,7 @@ export const PopupInsert = () => {
                 id="name"
                 type="text"
                 required
-                value={formData.name}
+                value={state.formData.name}
                 onChange={handleChange}
               />
             </div>
@@ -149,7 +147,7 @@ export const PopupInsert = () => {
                 id="email"
                 type="email"
                 required
-                value={formData.email}
+                value={state.formData.email}
                 onChange={handleChange}
               />
             </div>
@@ -161,7 +159,7 @@ export const PopupInsert = () => {
                 id="telephone"
                 type="text"
                 required
-                value={formData.telephone}
+                value={state.formData.telephone}
                 onChange={handleChange}
               />
             </div>
@@ -172,13 +170,13 @@ export const PopupInsert = () => {
               <Select
                 id="properti"
                 required
-                value={formData.properti}
+                value={state.formData.properti}
                 onChange={handleChange}
               >
                 <option value="" selected disabled>
                   -- Select an option --
                 </option>
-                {listProperties?.map((kost) => (
+                {state.listProperties?.map((kost) => (
                   <option key={kost.id} value={kost.id}>
                     {kost.name}
                   </option>
@@ -193,7 +191,7 @@ export const PopupInsert = () => {
               <Select
                 id="status"
                 required
-                value={formData.status}
+                value={state.formData.status}
                 onChange={handleChange}
               >
                 <option value="" selected disabled>
@@ -211,7 +209,7 @@ export const PopupInsert = () => {
       </Modal>
 
       <ToastSubmit
-        show={showToast}
+        show={state.showToast}
         onDismiss={handleShowToast}
         message="Leads Berhasil Ditambahkan"
       />
