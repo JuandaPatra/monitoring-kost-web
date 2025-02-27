@@ -26,13 +26,7 @@ interface Kost{
     kost_owner: string
 }
 
-interface KostUpdate{
-    id: number
-    name: string
-    address: string
-    price: number
-    kost_owner: string
-}
+
 
 export const PopupEditKost: React.FC<PopupEditProps> = ({show, data, onDismiss}) => {
     if(!data)return null

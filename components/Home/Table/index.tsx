@@ -1,6 +1,6 @@
 "use client";
 import axios from "axios";
-import { Table } from "flowbite-react";
+import { Spinner  } from "flowbite-react";
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -58,6 +58,7 @@ export const HomeTable = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
+
   // Define columns
   const columnHelper = createColumnHelper<Lead>();
   const columns = [
@@ -92,7 +93,6 @@ export const HomeTable = () => {
   ];
 
   const handleEdit = (e: Row<Lead>) => {
-    console.log(e.original.id);
     setShowEditPopup(true);
     setSelectedData(e.original);
   };
@@ -203,7 +203,7 @@ export const HomeTable = () => {
       <h1 className="text-center text-xl text-cyan-500 font-bold mb-3">
         LEADS KOST
       </h1>
-      {/* <div className="flex">
+      <div className="flex">
         <div className="col-5">
           <div>
             <DatePicker
@@ -225,7 +225,7 @@ export const HomeTable = () => {
         >
           Download
         </button>
-      </div> */}
+      </div>
       <label htmlFor="search" className="mb-4 flex justify-end">
         <div className="flex items-center">
 
@@ -286,7 +286,8 @@ export const HomeTable = () => {
                   colSpan={table.getAllColumns().length}
                   className="px-4 py-4 text-center text-gray-500"
                 >
-                  No data available
+                  {/* No data available  */}
+                  <Spinner aria-label="Default status example" />
                 </td>
               </tr>
             )}

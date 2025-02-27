@@ -1,6 +1,5 @@
 "use client";
-import axios from "axios";
-import { Table } from "flowbite-react";
+
 import { useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -22,6 +21,7 @@ import { PopupEdit } from "@/components/PopupEdit";
 import { useParams } from "next/navigation";
 import useKostStore from "@/store/tableKostStore";
 import { PopupEditKost } from "../popup/PopupEditKost";
+import Link from "next/link";
 
 interface Kost {
   id: number;
@@ -84,12 +84,18 @@ export const KostsTable = () => {
       id: "edit",
       header: () => <span className="font-bold text-lg py-3">Actions</span>,
       cell: ({ row }) => (
+        <div className=" flex">
         <button
           onClick={() => handleEdit(row)}
-          className="bg-cyan-500 w-20  text-white px-3 py-1 rounded text-base"
+          className="bg-cyan-500 w-16  text-white px-2 py-1 rounded text-base mr-2"
         >
           Edit
         </button>
+        <Link href={`rooms?id=${row.original.id}`} className="bg-yellow-500 w-16  text-white px-2 py-1 rounded block text-base">
+        Kamar
+        </Link>
+        
+        </div>
       ),
     }),
   ];
